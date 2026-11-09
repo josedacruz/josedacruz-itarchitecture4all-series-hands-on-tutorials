@@ -1,0 +1,18 @@
+# OpenTelemetry Collector tutorial lab (tested 2026-11-09).
+# Versions pinned: Collector contrib 0.164.0, Jaeger 2.22.0, telemetrygen 0.164.0.
+# Pick the Collector config for each step with CONFIG=step2 docker compose up -d
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.164.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./configs/${CONFIG:-step1}.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+      - "8888:8888"   # the Collector's own metrics
+      - "13133:13133" # health_check extension
+  jaeger:
+    image: jaegertracing/jaeger:2.22.0
+    ports:
+      - "16686:16686" # Jaeger UI and query API
